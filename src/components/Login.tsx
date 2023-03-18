@@ -7,6 +7,11 @@ interface AuthState {
   validating: boolean;
 }
 
+interface AuthPayload {
+  name: string;
+  username: string;
+}
+
 const initialState: AuthState = {
   username: "",
   name: "",
@@ -14,14 +19,15 @@ const initialState: AuthState = {
   validating: true,
 };
 
-type AuthAction = { type: "logout" } | { type: "login" };
+type AuthAction = { type: "logout" } | { type: "login"; payload: AuthPayload };
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
     case "login":
+      const { name, username } = action.payload;
       return {
-        username: "John01",
-        name: "John",
+        username,
+        name,
         token: "token",
         validating: false,
       };
@@ -79,7 +85,12 @@ export const Login = () => {
         <div>
           <div className="alert alert-danger">Not valid</div>
           <button
-            onClick={() => handleAuth({ type: "login" })}
+            onClick={() =>
+              handleAuth({
+                type: "login",
+                payload: { name: "Pepe", username: "user" },
+              })
+            }
             className="btn btn-primary"
           >
             Login

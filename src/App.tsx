@@ -1,4 +1,5 @@
 import { Contador } from "./components/Contador";
+import { Form } from "./components/Form";
 import { Login } from "./components/Login";
 import { Users } from "./components/Users";
 
@@ -9,6 +10,7 @@ const App = () => {
       <Contador />
       <Login />
       <Users />
+      <Form />
     </>
   )
 }

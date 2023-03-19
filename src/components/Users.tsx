@@ -2,7 +2,7 @@ import { useUsers } from "../hooks/useUsers";
 import { User } from "../interfaces/reqRes";
 
 export const Users = () => {
-  const {users, handlePagination} = useUsers();
+  const {users, getNextPage, getPrevPage} = useUsers();
 
   const renderitem = (user: User) => (
     <tr key={user.id.toString()}>
@@ -27,8 +27,11 @@ export const Users = () => {
         </thead>
         <tbody>{users.map(renderitem)}</tbody>
       </table>
-      <button onClick={handlePagination} className="btn btn-primary">
+      <button onClick={getNextPage} className="btn btn-primary">
         Next users
+      </button>
+      <button onClick={getPrevPage} className="btn btn-primary">
+        Prev users
       </button>
     </div>
   );

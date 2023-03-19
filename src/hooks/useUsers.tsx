@@ -2,26 +2,40 @@ import { useEffect, useState, useRef } from "react";
 import { reqResApi } from "../api/reqRes";
 import { ReqResData, User } from "../interfaces/reqRes";
 
+export const useUsers = (page = 0) => {
+  const isPagesLimit = useRef(false);
+  const pageRef = useRef(page);
+  const [users, setUsers] = useState<User[]>([]);
+  useEffect(() => {
+    getNextPage();
+  }, []);
 
-export const useUsers = (page = 1) => {
-    const pageRef = useRef(page);
-    const [users, setUsers] = useState<User[]>([]);
-    useEffect(() => {
-      handlePagination();
-    }, []);
-  
-    const handlePagination = async () => {
-      const response = await reqResApi.get<ReqResData>("/users", {
-        params: {
-          page: pageRef.current,
-        },
-      });
-  
-      if (response.data.data.length) {
-        setUsers(response.data.data);
-        pageRef.current++;
-      }
-    };
+  const getUsersData = async () => {
+    const response = await reqResApi.get<ReqResData>("/users", {
+      params: {
+        page: pageRef.current,
+      },
+    });
+    return response;
+  };
 
-    return {users, handlePagination}
-}
+  const getNextPage = async () => {
+    if (!isPagesLimit.current) {
+      pageRef.current++;
+      const response = await getUsersData();
+      isPagesLimit.current = response.data.total_pages === pageRef.current;
+      setUsers(response.data.data);
+    }
+  };
+
+  const getPrevPage = async () => {
+    if (pageRef.current > 1) {
+      pageRef.current--;
+      const response = await getUsersData();
+      isPagesLimit.current = response.data.total_pages === pageRef.current;
+      setUsers(response.data.data);
+    }
+  };
+
+  return { users, getNextPage, getPrevPage };
+};
